@@ -7,6 +7,11 @@ Use both `useSyncExternalStore` and `useRef` to share states in context/provider
 
 # Example
 ```ts
+import {
+  PublishSubscriber,
+  createPublishSubscriber,
+} from "create-publish-subscriber";
+
 interface Address {
   street1: string;
   street2?: string;

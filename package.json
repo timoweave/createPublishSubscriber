@@ -1,6 +1,6 @@
 {
   "name": "create-publish-subscriber",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "create publish context provider and subscribe hook consumer",
   "main": "./dist/createPublishSubscriber.js",
   "module": "./dist/createPublishSubscriber.mjs",
