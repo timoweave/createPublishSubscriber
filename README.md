@@ -15,7 +15,7 @@ interface Address {
   zipcode: number;
 }
 
-const ieAddress: Address = {
+const hack: Address = {
   street1: "1 hack drive",
   city: "menlo park",
   state: "CA",
@@ -23,14 +23,29 @@ const ieAddress: Address = {
 };
 
 test("only subscribe to street1 from the createPubSub<Address>", () => {
-    const { useSub, PubProvider: wrapper } = createPubSub<Address>(ieAddress);
-    const useStreet1 = () => useSub((s) => s.street1)
-    const rendered = renderHook(() => useStreet1(), { wrapper });
-    const street1 = () => rendered.result.current;
+  const { useSub, PubProvider } = createPubSub<Address>(hack);
+  const options = { wrapper: PubProvider }
+  const useStreet1 = () => useSub((s) => s.street1)
+  const rendered = renderHook(() => useStreet1(), options);
+  
+  const street1 = () => rendered.result.current;
+  expect(street1().data).toEqual(hack.street1);
 
-    expect(street1().data).toEqual(ieAddress.street1);
+  act(() => street1().setData({ street2: "PO Box 123" }));
+  expect(street1().data).toEqual(hack.street1);
+});
 
-    act(() => street1().setData({ street2: "PO Box 123" }));
-    expect(street1().data).toEqual(ieAddress.street1);
-  });
+test("subscribe to address.* from the createPubSub<Address>", () => {
+  const { useSub, PubProvider } = createPubSub<Address>(hack);
+  const options = { wrapper: PubProvider }
+  const rendered = renderHook(() => useSub((s) => s), options);
+  
+  const address = () => rendered.result.current;
+  expect(address().data).toEqual({ ...hack });
+
+  act(() => address().setData({ street2: "PO Box 123" }));
+  expect(address().data.street2).toEqual("PO Box 123");
+  expect(address().data).toEqual({ ...hack, street2: "PO Box 123" });
+});
+
 ```

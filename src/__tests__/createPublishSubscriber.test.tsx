@@ -104,56 +104,43 @@ describe("single key/value", () => {
 });
 
 describe("multiple key/value", () => {
+  interface Address {
+    street1: string;
+    street2?: string;
+    city: string;
+    state: string;
+    zipcode: number;
+  }
+
+  const hack: Address = {
+    street1: "1 hack drive",
+    city: "menlo park",
+    state: "CA",
+    zipcode: 94025,
+  };
+
   test("all address case", () => {
-    interface Address {
-      street1: string;
-      street2?: string;
-      city: string;
-      state: string;
-      zipcode: number;
-    }
-    const initAddress: Address = {
-      street1: "1 hack drive",
-      city: "menlo park",
-      state: "CA",
-      zipcode: 94025,
-    };
-
-    const { useSub, PubProvider: wrapper } = createPubSub<Address>(initAddress);
+    const { useSub, PubProvider: wrapper } = createPubSub<Address>(hack);
     const rendered = renderHook(() => useSub((s) => s), { wrapper });
-    const address = () => rendered.result.current;
 
-    expect(address().data).toEqual({ ...initAddress });
+    const address = () => rendered.result.current;
+    expect(address().data).toEqual({ ...hack });
 
     act(() => address().setData({ street2: "PO Box 123" }));
     expect(address().data.street2).toEqual("PO Box 123");
-    expect(address().data).toEqual({ ...initAddress, street2: "PO Box 123" });
+    expect(address().data).toEqual({ ...hack, street2: "PO Box 123" });
   });
 
   test("street1 address case", () => {
-    interface Address {
-      street1: string;
-      street2?: string;
-      city: string;
-      state: string;
-      zipcode: number;
-    }
-    const ieAddress: Address = {
-      street1: "1 hack drive",
-      city: "menlo park",
-      state: "CA",
-      zipcode: 94025,
-    };
-
-    const { useSub, PubProvider: wrapper } = createPubSub<Address>(ieAddress);
+    const { useSub, PubProvider: wrapper } = createPubSub<Address>(hack);
     const useStreet1 = () => useSub((s) => s.street1);
     const rendered = renderHook(() => useStreet1(), { wrapper });
-    const street1 = () => rendered.result.current;
 
-    expect(street1().data).toEqual(ieAddress.street1);
+    const street1 = () => rendered.result.current;
+    expect(street1().data).toEqual(hack.street1);
 
     act(() => street1().setData({ street2: "PO Box 123" }));
-    expect(street1().data).toEqual(ieAddress.street1);
+    expect(street1().data).toEqual(hack.street1);
   });
 });
 
