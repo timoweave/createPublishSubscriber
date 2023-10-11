@@ -6,20 +6,21 @@ import React, {
   useContext,
 } from "react";
 
-export interface CreatePubSubReturn<StoreData> {
+export interface PublishSubscriber<StoreData, StoreMember = StoreData> {
+  data: StoreMember;
+  setData: (value: Partial<StoreData>) => void;
+}
+
+export interface CreatePublishSubscriber<StoreData> {
   PubProvider: (props: React.PropsWithChildren) => React.JSX.Element;
   useSub: <StoreMember>(
     selectStoreMember: (store: StoreData) => StoreMember,
-  ) => {
-    data: StoreMember;
-    setData: (value: Partial<StoreData>) => void;
-  };
-  wrapper: (props: React.PropsWithChildren) => React.JSX.Element;
+  ) => PublishSubscriber<StoreData, StoreMember>;
 }
 
-export function createPubSub<StoreData>(
+export function createPublishSubscriber<StoreData>(
   initialState: StoreData,
-): CreatePubSubReturn<StoreData> {
+): CreatePublishSubscriber<StoreData> {
   type Callback = () => void;
 
   type PubSubContextType = {
@@ -89,9 +90,5 @@ export function createPubSub<StoreData>(
     return { data, setData: context.set };
   }
 
-  const wrapper = (props: React.PropsWithChildren) => (
-    <PubProvider>{props.children}</PubProvider>
-  );
-
-  return { PubProvider, useSub, wrapper };
+  return { PubProvider, useSub };
 }

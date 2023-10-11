@@ -22,10 +22,11 @@ const hack: Address = {
   zipcode: 94025,
 };
 
-test("only subscribe to street1 from the createPubSub<Address>", () => {
-  const { useSub, PubProvider } = createPubSub<Address>(hack);
+test("only subscribe to street1 from the createPublishSubscriber<Address>", () => {
+  const { useSub, PubProvider } = createPublishSubscriber<Address>(hack);
   const options = { wrapper: PubProvider }
-  const useStreet1 = () => useSub((s) => s.street1)
+  const useStreet1: PublishSubscriber<Address, string> = 
+    () => useSub((s) => s.street1);
   const rendered = renderHook(() => useStreet1(), options);
   
   const street1 = () => rendered.result.current;
@@ -35,12 +36,13 @@ test("only subscribe to street1 from the createPubSub<Address>", () => {
   expect(street1().data).toEqual(hack.street1);
 });
 
-test("subscribe to address.* from the createPubSub<Address>", () => {
-  const { useSub, PubProvider } = createPubSub<Address>(hack);
+test("subscribe to address.* from the createPublishSubscriber<Address>", () => {
+  const { useSub, PubProvider } = createPublishSubscriber<Address>(hack);
   const options = { wrapper: PubProvider }
   const rendered = renderHook(() => useSub((s) => s), options);
   
-  const address = () => rendered.result.current;
+  const address: PublishSubscriber<Address>  = 
+    () => rendered.result.current;
   expect(address().data).toEqual({ ...hack });
 
   act(() => address().setData({ street2: "PO Box 123" }));
