@@ -1,10 +1,10 @@
 # Introduction
 
-1. setup as easy as hook/context
-1. render as little as redux/recoil
-
 Inspired by Jack Herrington's blasting fast react context video.
 https://www.youtube.com/watch?v=ZKlXqrcBx88. Thank you Jack!
+
+1. setup as easy as hook/context
+1. render as little as redux/recoil
 
 Use both `useSyncExternalStore` and `useRef` to share states in context/provider between react components,instead of `useState`, to just re-render only component that subscribes to a subset state that is published (or changed).
 
